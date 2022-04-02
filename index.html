@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Management System</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h2 class="header">Product Management System</h2>
+      <button id="create">Add Product</button>
+      <form id="add-product">
+        <input type="text" placeholder="title" name="title" />
+        <div class="price">
+          <input
+            type="number"
+            onkeyup="calcFinalPrice()"
+            placeholder="basic price"
+            name="price"
+            id="price"
+          />
+          <input
+            type="number"
+            onkeyup="calcFinalPrice()"
+            placeholder="taxes"
+            name="taxes"
+            id="taxes"
+          />
+          <input
+            type="number"
+            onkeyup="calcFinalPrice()"
+            placeholder="discount"
+            name="discount"
+            id="discount"
+          />
+          <label for="totalPrice">Total Price</label>
+          <input type="text" readonly name="totalPrice" id="final-price" />
+        </div>
+        <input type="number" placeholder="count" name="count" />
+        <input type="text" placeholder="brand" name="brand" />
+        <input type="text" placeholder="category" name="category" />
+        <button type="submit" id="submit">Create Product</button>
+      </form>
+      <div class="outputs">
+        <div class="search-block">
+          <input type="text" id="search" placeholder="search" />
+          <div class="search-btns">
+            <button id="search-title">Search By Title</button>
+            <button id="search-category">Search By Categorg</button>
+          </div>
+        </div>
+        <div id="deleteAll"></div>
+        <table>
+          <thead>
+            <tr>
+              <th>id</th>
+              <th class="title">title</th>
+              <th>price</th>
+              <th>count</th>
+              <th>category</th>
+              <th>edit</th>
+              <th>delete</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <script src="./main.js"></script>
+  </body>
+</html>
