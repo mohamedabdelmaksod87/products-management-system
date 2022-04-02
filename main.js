@@ -1,26 +1,31 @@
-//Project Html elements
+//Project HTML Elements
 const createBtn = document.getElementById("create");
-const createForm = document.getElementById("add-product");
+const productForm = document.getElementById("add-product");
 const finalPrice = document.getElementById("final-price");
 const price = document.getElementById("price");
 const taxes = document.getElementById("taxes");
 const discount = document.getElementById("discount");
 const tableBody = document.getElementById("tbody");
 const deleteAllDiv = document.getElementById("deleteAll");
+const formSubmitBtn = document.getElementById("submit");
 
-// Display and hide create product form
-createBtn.onclick = () => {
-  createBtn.style.display = "none";
-  createForm.style.display = "block";
-};
+//Project Global Variables
+let newProducts, mode, productIndex;
 
 //Check if Products exists inLocal Storage
-let newProducts;
 if (localStorage.products) {
   newProducts = JSON.parse(localStorage.products);
 } else {
   newProducts = [];
 }
+
+// Display and hide create product form
+createBtn.onclick = () => {
+  createBtn.style.display = "none";
+  formSubmitBtn.innerHTML = `Create Product`;
+  productForm.style.display = "block";
+  mode = "create";
+};
 
 //Calculate total Price
 function calcFinalPrice() {
@@ -35,17 +40,19 @@ function calcFinalPrice() {
 }
 
 // Create New Product & Save it to Local Storage
-createForm.onsubmit = (eve) => {
+productForm.onsubmit = (eve) => {
   eve.preventDefault();
+  console.log(mode);
   const formData = new FormData(eve.target);
   let newProduct = Object.fromEntries(formData);
-  newProducts.push(newProduct);
+  if (mode === "create") {
+    newProducts.push(newProduct);
+  }
+  if (mode === "update") {
+    newProducts[productIndex] = newProduct;
+  }
   localStorage.setItem("products", JSON.stringify(newProducts));
-  // reset form data & close new product form
-  createForm.reset();
-  finalPrice.style.backgroundColor = "#111";
-  createForm.style.display = "none";
-  createBtn.style.display = "block";
+  resetFormSubmit();
   displayProducts();
 };
 
@@ -60,7 +67,7 @@ function displayProducts() {
       <td>${product.totalPrice}</td>
       <td>${product.count}</td>
       <td>${product.category}</td>
-      <td><button class="edit">Edit</button></td>
+      <td><button class="edit" onclick="editProduct(${index})">Edit</button></td>
       <td><button onclick="deleteProduct(${index})" class="delete">Delete</button></td>
       <td><button class="details">Details</button></td>
     </tr>
@@ -97,6 +104,30 @@ function deleteAll() {
   localStorage.clear();
   newProducts = [];
   displayProducts();
+}
+
+//edit product logic
+function editProduct(index) {
+  mode = "update";
+  productIndex = index;
+  let productData = newProducts[index];
+  const formData = new FormData(productForm);
+  for (const key of formData.keys()) {
+    productForm.elements[key].value = productData[key];
+  }
+  calcFinalPrice();
+  formSubmitBtn.innerHTML = `Update Product`;
+  createBtn.style.display = "none";
+  productForm.style.display = "block";
+  scroll({ top: 0, behavior: "smooth" });
+}
+
+// reset form data & close product form & cancel form submit
+function resetFormSubmit() {
+  productForm.reset();
+  finalPrice.style.backgroundColor = "#111";
+  productForm.style.display = "none";
+  createBtn.style.display = "block";
 }
 
 displayProducts();
