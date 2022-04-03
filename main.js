@@ -8,6 +8,8 @@ const discount = document.getElementById("discount");
 const tableBody = document.getElementById("tbody");
 const deleteAllDiv = document.getElementById("deleteAll");
 const formSubmitBtn = document.getElementById("submit");
+const searchData = document.getElementById("search");
+const resetSearchBtn = document.getElementById("reset-search");
 
 //Project Global Variables
 let newProducts, mode, productIndex;
@@ -53,13 +55,13 @@ productForm.onsubmit = (eve) => {
   }
   localStorage.setItem("products", JSON.stringify(newProducts));
   resetFormSubmit();
-  displayProducts();
+  displayProducts(newProducts);
 };
 
 //display products
-function displayProducts() {
+function displayProducts(products = []) {
   let tbodyContent = ``;
-  newProducts.forEach((product, index) => {
+  products.forEach((product, index) => {
     tbodyContent += `
     <tr>
       <td class="id">${index + 1}</td>
@@ -96,14 +98,14 @@ function displayProducts() {
 function deleteProduct(index) {
   newProducts.splice(index, 1);
   localStorage.products = JSON.stringify(newProducts);
-  displayProducts();
+  displayProducts(newProducts);
 }
 
 //delete all function
 function deleteAll() {
   localStorage.clear();
   newProducts = [];
-  displayProducts();
+  displayProducts(newProducts);
 }
 
 //edit product logic
@@ -130,4 +132,23 @@ function resetFormSubmit() {
   createBtn.style.display = "block";
 }
 
-displayProducts();
+//search function
+function searchProducts(by) {
+  let searchResults = [];
+  if (searchData.value) {
+    searchResults = newProducts.filter((product) => {
+      return product[by].toLowerCase().includes(searchData.value.toLowerCase());
+    });
+    resetSearchBtn.style.display = "block";
+    displayProducts(searchResults);
+  }
+}
+
+//Reset Search Results
+function resetSearchResults() {
+  resetSearchBtn.style.display = "none";
+  searchData.value = "";
+  displayProducts(newProducts);
+}
+
+displayProducts(newProducts);

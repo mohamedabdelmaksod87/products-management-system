@@ -4,12 +4,12 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Product Management System</title>
+    <title>Products Management System</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div class="container">
-      <h2 class="header">Product Management System</h2>
+      <h2 class="header">Products Management System</h2>
       <button id="create">Add Product</button>
       <form id="add-product">
         <input type="text" placeholder="title" name="title" />
@@ -50,9 +50,14 @@
         <div class="search-block">
           <input type="text" id="search" placeholder="search" />
           <div class="search-btns">
-            <button id="search-title">Search By Title</button>
-            <button id="search-category">Search By Categorg</button>
+            <button onclick="searchProducts('title')">Search By Title</button>
+            <button onclick="searchProducts('category')">
+              Search By Categorg
+            </button>
           </div>
+          <button onclick="resetSearchResults()" id="reset-search">
+            Reset Search Results
+          </button>
         </div>
         <div id="deleteAll"></div>
         <table>

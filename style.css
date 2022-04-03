@@ -94,6 +94,10 @@ button:hover {
     font-size: 12px;
   }
 }
+#reset-search {
+  margin-bottom: 20px;
+  display: none;
+}
 .deleteAll {
   width: 100%;
   background-color: red;
