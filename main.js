@@ -12,7 +12,7 @@ const searchData = document.getElementById("search");
 const resetSearchBtn = document.getElementById("reset-search");
 
 //Project Global Variables
-let newProducts, mode, productIndex;
+let newProducts, mode, productIndex, searchResults;
 
 //Check if Products exists inLocal Storage
 if (localStorage.products) {
@@ -44,11 +44,12 @@ function calcFinalPrice() {
 // Create New Product & Save it to Local Storage
 productForm.onsubmit = (eve) => {
   eve.preventDefault();
-  console.log(mode);
   const formData = new FormData(eve.target);
   let newProduct = Object.fromEntries(formData);
+  const lastId =
+    newProducts.length > 0 ? newProducts[newProducts.length - 1].id : 0;
   if (mode === "create") {
-    newProducts.push(newProduct);
+    newProducts.push({ ...newProduct, id: lastId + 1 });
   }
   if (mode === "update") {
     newProducts[productIndex] = newProduct;
@@ -69,14 +70,20 @@ function displayProducts(products = []) {
       <td>${product.totalPrice}</td>
       <td>${product.count}</td>
       <td>${product.category}</td>
-      <td><button class="edit" onclick="editProduct(${index})">Edit</button></td>
-      <td><button onclick="deleteProduct(${index})" class="delete">Delete</button></td>
+      <td><button class="edit" onclick="editProduct(${
+        product.id
+      })">Edit</button></td>
+      <td><button onclick="deleteProduct(${
+        product.id
+      })" class="delete">Delete</button></td>
       <td><button class="details">Details</button></td>
     </tr>
     <tr class="small-screen">
       <td colspan="5">
-        <button class="edit">Edit</button>
-        <button onclick="deleteProduct(${index})" class="delete">Delete</button>
+        <button class="edit" onclick="editProduct(${product.id})">Edit</button>
+        <button onclick="deleteProduct(${
+          product.id
+        })" class="delete">Delete</button>
         <button class="details">Details</button>
       </td>
     </tr>
@@ -85,9 +92,9 @@ function displayProducts(products = []) {
   tableBody.innerHTML = tbodyContent;
 
   //display delete all button
-  if (newProducts.length > 0) {
+  if (products.length > 0) {
     deleteAllDiv.innerHTML = `
-    <button onclick="deleteAll()" class="deleteAll">Delete All (${newProducts.length})</button>
+    <button onclick="deleteAll()" class="deleteAll">Delete All (${products.length})</button>
     `;
   } else {
     deleteAllDiv.innerHTML = "";
@@ -95,8 +102,10 @@ function displayProducts(products = []) {
 }
 
 //delete single product
-function deleteProduct(index) {
-  newProducts.splice(index, 1);
+function deleteProduct(id) {
+  newProducts = newProducts.filter((product) => {
+    return product.id !== id;
+  });
   localStorage.products = JSON.stringify(newProducts);
   displayProducts(newProducts);
 }
@@ -109,10 +118,11 @@ function deleteAll() {
 }
 
 //edit product logic
-function editProduct(index) {
+function editProduct(id) {
   mode = "update";
-  productIndex = index;
-  let productData = newProducts[index];
+  const productData = newProducts.find((product) => {
+    return product.id === id;
+  });
   const formData = new FormData(productForm);
   for (const key of formData.keys()) {
     productForm.elements[key].value = productData[key];
@@ -134,7 +144,7 @@ function resetFormSubmit() {
 
 //search function
 function searchProducts(by) {
-  let searchResults = [];
+  // searchResults = [];
   if (searchData.value) {
     searchResults = newProducts.filter((product) => {
       return product[by].toLowerCase().includes(searchData.value.toLowerCase());
@@ -146,6 +156,7 @@ function searchProducts(by) {
 
 //Reset Search Results
 function resetSearchResults() {
+  searchResults = [];
   resetSearchBtn.style.display = "none";
   searchData.value = "";
   displayProducts(newProducts);
